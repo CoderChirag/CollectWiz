@@ -1,4 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
+import { app } from './utils/firebase/firebase.util';
 
 import Home from './routes/home/home.route';
 
