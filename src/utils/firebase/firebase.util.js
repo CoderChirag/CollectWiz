@@ -1,5 +1,12 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, getDoc, addDoc } from 'firebase/firestore';
+import {
+	getAuth,
+	signInWithPopup,
+	GoogleAuthProvider,
+	onAuthStateChanged,
+	signOut,
+} from 'firebase/auth';
 
 const firebaseConfig = {
 	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -12,7 +19,51 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
+
+const provider = new GoogleAuthProvider();
+provider.setCustomParameters({ prompt: 'select_account' });
+
+export const auth = getAuth();
+export const signInWithGoogle = () => signInWithPopup(auth, provider);
+
 export const db = getFirestore(app);
+
+export const createUserProfileDocument = async (
+	userAuth,
+	additionalData = {}
+) => {
+	if (!userAuth) return;
+	const userDocRef = collection(db, 'users', userAuth.uid);
+	try {
+		const snapshot = await getDoc(userDocRef);
+
+		if (!snapshot.exists()) {
+			const { displayName, email } = userAuth;
+			const createdAt = new Date();
+
+			try {
+				await addDoc(userDocRef, {
+					displayName,
+					email,
+					createdAt,
+					...additionalData,
+				});
+			} catch (error) {
+				console.log('Error creating user', error.message);
+			}
+		}
+	} catch (e) {
+		console.log('Error fetching user data', e.message);
+	}
+	return userDocRef;
+};
+
+export const signOutUser = async () => {
+	await signOut(auth);
+};
+
+export const onAuthStateChangedListener = callback =>
+	onAuthStateChanged(auth, callback);
 
 // const createDummyData = async () => {
 // 	try {
