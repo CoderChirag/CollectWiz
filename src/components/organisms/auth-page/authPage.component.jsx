@@ -59,10 +59,12 @@ const AuthPage = () => {
 				<Box sx={{ marginTop: '25px', padding: '20px 0' }}>
 					<Grid container justifyContent='center' alignItems='center'>
 						<Grid item>
-							{/* <GoogleButtonLight /> */}
-							<GoogleButtonDark
-								scale={{ xs: 0.8, sm: 1, lg: 1.2 }}
+							<GoogleButtonLight
+								scale={{ lg: 1.5, md: 1.2, sm: 1.1, xs: 1 }}
 							/>
+							{/* <GoogleButtonDark
+								scale={{ xs: 0.8, sm: 1, lg: 1.2 }}
+							/> */}
 						</Grid>
 					</Grid>
 				</Box>

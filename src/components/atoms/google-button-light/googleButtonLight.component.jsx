@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 
 const StyledGoogleButtonLight = styled.button`
 	transition: background-color 0.3s, box-shadow 0.3s;
-	transform: scale(1.5);
+	transform: scale(${props => props.scale.lg});
 
 	padding: 12px 16px 12px 42px;
 	border: none;
@@ -42,19 +42,19 @@ const StyledGoogleButtonLight = styled.button`
 		cursor: not-allowed;
 	}
 	@media (max-width: 768px) {
-		transform: scale(1.2);
+		transform: scale(${props => props.scale.md});
 	}
 	@media (max-width: 540px) {
-		transform: scale(1.1);
+		transform: scale(${props => props.scale.sm});
 	}
 	@media (max-width: 360px) {
-		transform: scale(1);
+		transform: scale(${props => props.scale.xs});
 	}
 `;
 
-const GoogleButtonLight = () => {
+const GoogleButtonLight = ({ scale }) => {
 	return (
-		<StyledGoogleButtonLight type='button'>
+		<StyledGoogleButtonLight type='button' scale={scale}>
 			Sign in with Google
 		</StyledGoogleButtonLight>
 	);
