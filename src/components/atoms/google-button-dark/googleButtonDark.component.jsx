@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { ClassNames } from '@emotion/react';
 
-const GoogleButtonDark = () => {
+const GoogleButtonDark = ({ scale }) => {
 	return (
 		<ClassNames>
 			{/* <SomeComponent
@@ -15,7 +15,7 @@ const GoogleButtonDark = () => {
 				<button
 					className={css`
 						all: unset;
-						transform: scale(1.2);
+						transform: scale(${scale.lg});
 
 						margin: auto;
 						width: fit-content;
@@ -33,11 +33,14 @@ const GoogleButtonDark = () => {
 						&:active {
 							background: #3367d6;
 						}
+						@media (max-width: 768px) {
+							transform: scale(${scale.md});
+						}
 						@media (max-width: 540px) {
-							transform: scale(1);
+							transform: scale(${scale.sm});
 						}
 						@media (max-width: 360px) {
-							transform: scale(0.8);
+							transform: scale(${scale.xs});
 						}
 					`}
 				>
