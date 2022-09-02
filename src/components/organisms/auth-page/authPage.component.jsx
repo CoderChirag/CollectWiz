@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { Typography } from '@mui/material';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
+import GoogleButtonLight from '../../atoms/google-button-light/googleButtonLight.component';
 
 const StyledHr = styled.hr`
 	width: 40%;
@@ -14,28 +15,53 @@ const StyledHr = styled.hr`
 const AuthPage = () => {
 	return (
 		<>
-			<Box>
-				<Grid container justifyContent='center' alignItems='center'>
-					<Grid item>
-						<AppTitle width='15rem' widthMd='10rem' />
+			<Box
+				sx={{
+					width: '100%',
+					height: '20vh',
+				}}
+			>
+				<Box>
+					<Grid container justifyContent='center' alignItems='center'>
+						<Grid item>
+							<AppTitle width='15rem' widthMd='10rem' />
+						</Grid>
 					</Grid>
-				</Grid>
-				<StyledHr />
+					<StyledHr />
+				</Box>
+				<Box sx={{ paddingTop: '1rem' }}>
+					<Grid container justifyContent='center' alignItems='center'>
+						<Grid item>
+							<Typography
+								variant='p'
+								sx={{
+									fontSize: { xs: '1.5rem', md: '2.2rem' },
+									fontWeight: '200',
+								}}
+							>
+								Login / Join Now
+							</Typography>
+						</Grid>
+					</Grid>
+				</Box>
 			</Box>
-			<Box sx={{ paddingTop: '1rem' }}>
-				<Grid container justifyContent='center' alignItems='center'>
-					<Grid item>
-						<Typography
-							variant='p'
-							sx={{
-								fontSize: { xs: '1.5rem', md: '2.2rem' },
-								fontWeight: '200',
-							}}
-						>
-							Login / Join Now
-						</Typography>
+			<Box
+				sx={{
+					width: '100%',
+					height: '50vh',
+					display: 'flex',
+					flexDirection: 'column',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+			>
+				<Box sx={{ marginTop: '25px', padding: '20px 0' }}>
+					<Grid container justifyContent='center' alignItems='center'>
+						<Grid item>
+							<GoogleButtonLight />
+						</Grid>
 					</Grid>
-				</Grid>
+				</Box>
 			</Box>
 		</>
 	);
