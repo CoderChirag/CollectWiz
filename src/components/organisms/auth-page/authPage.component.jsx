@@ -1,4 +1,5 @@
 import { Box, Grid } from '@mui/material';
+import AppTitle from '../../atoms/app-title/appTitle.component';
 
 const AuthPage = () => {
 	return (
@@ -6,7 +7,7 @@ const AuthPage = () => {
 			<Box sx={{ padding: '25px 0' }}>
 				<Grid container justifyContent='center' alignItems='center'>
 					<Grid item>
-						<img src='./assets/images/logo.png' alt='logo' />
+						<AppTitle width='20rem' />
 					</Grid>
 				</Grid>
 			</Box>
