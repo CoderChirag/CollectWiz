@@ -1,14 +1,10 @@
-import { Outlet, useLocation } from 'react-router-dom';
-
-function Home() {
-	const location = useLocation();
+function HomeRoute() {
 	return (
 		<div className='App'>
 			<h1>Hello World</h1>
-			<p>You are at: {location.pathname}</p>
-			{/* <Outlet /> */}
+			<p>This is the Home Page</p>
 		</div>
 	);
 }
 
-export default Home;
+export default HomeRoute;
