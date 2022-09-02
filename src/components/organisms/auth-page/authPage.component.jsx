@@ -4,6 +4,7 @@ import { Typography } from '@mui/material';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
 import GoogleButtonLight from '../../atoms/google-button-light/googleButtonLight.component';
+import GoogleButtonDark from '../../atoms/google-button-dark/googleButtonDark.component';
 
 const StyledHr = styled.hr`
 	width: 40%;
@@ -58,7 +59,8 @@ const AuthPage = () => {
 				<Box sx={{ marginTop: '25px', padding: '20px 0' }}>
 					<Grid container justifyContent='center' alignItems='center'>
 						<Grid item>
-							<GoogleButtonLight />
+							{/* <GoogleButtonLight /> */}
+							<GoogleButtonDark />
 						</Grid>
 					</Grid>
 				</Box>
