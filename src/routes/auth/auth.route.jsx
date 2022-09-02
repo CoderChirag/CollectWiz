@@ -1,10 +1,7 @@
+import AuthPage from '../../components/organisms/auth-page/authPage.component';
+
 function AuthRoute() {
-	return (
-		<div className='App'>
-			<h1>Hello World</h1>
-			<p>This is the Auth Page</p>
-		</div>
-	);
+	return <AuthPage />;
 }
 
 export default AuthRoute;
