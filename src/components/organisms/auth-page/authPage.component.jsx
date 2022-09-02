@@ -1,21 +1,42 @@
 import { Box, Grid } from '@mui/material';
+import styled from '@emotion/styled';
+import { Typography } from '@mui/material';
+
 import AppTitle from '../../atoms/app-title/appTitle.component';
+
+const StyledHr = styled.hr`
+	width: 40%;
+	@media (max-width: 768px) {
+		width: 80%;
+	}
+`;
 
 const AuthPage = () => {
 	return (
 		<>
-			<Box sx={{ padding: '25px 0' }}>
+			<Box>
 				<Grid container justifyContent='center' alignItems='center'>
 					<Grid item>
-						<AppTitle width='20rem' />
+						<AppTitle width='15rem' widthMd='10rem' />
+					</Grid>
+				</Grid>
+				<StyledHr />
+			</Box>
+			<Box sx={{ paddingTop: '1rem' }}>
+				<Grid container justifyContent='center' alignItems='center'>
+					<Grid item>
+						<Typography
+							variant='p'
+							sx={{
+								fontSize: { xs: '1.5rem', md: '2.2rem' },
+								fontWeight: '200',
+							}}
+						>
+							Login / Join Now
+						</Typography>
 					</Grid>
 				</Grid>
 			</Box>
-			<br />
-
-			<hr />
-
-			<p> Login / join now </p>
 		</>
 	);
 };
