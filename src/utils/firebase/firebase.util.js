@@ -1,12 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
-import {
-	getAuth,
-	signInWithPopup,
-	GoogleAuthProvider,
-	onAuthStateChanged,
-	signOut,
-} from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
 	apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -19,74 +13,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-
-const provider = new GoogleAuthProvider();
-provider.setCustomParameters({ prompt: 'select_account' });
-
 export const auth = getAuth();
-export const signInWithGoogle = () => signInWithPopup(auth, provider);
-
 export const db = getFirestore(app);
 
-export const createUserProfileDocument = async (
-	userAuth,
-	additionalData = {}
-) => {
-	if (!userAuth) return;
-	const userDocRef = doc(db, 'users', userAuth.uid);
-	try {
-		const snapshot = await getDoc(userDocRef);
-
-		if (!snapshot.exists()) {
-			const {
-				displayName,
-				email,
-				emailVerified,
-				isAnonymous,
-				phoneNumber,
-				photoURL,
-				providerData,
-				providerId,
-				uid,
-			} = userAuth;
-			const metadata = {};
-			for (let i = 0; i < Object.keys(userAuth.metadata).length; i++) {
-				metadata[Object.keys(userAuth.metadata)[i]] =
-					userAuth.metadata[Object.keys(userAuth.metadata)[i]];
-			}
-
-			try {
-				await setDoc(userDocRef, {
-					displayName,
-					email,
-					emailVerified,
-					isAnonymous,
-					metadata,
-					phoneNumber,
-					photoURL,
-					providerData,
-					providerId,
-					uid,
-					...additionalData,
-				});
-			} catch (error) {
-				console.log('Error creating user', error.message);
-			}
-		}
-	} catch (e) {
-		console.log('Error fetching user data', e.message);
-	}
-	return userDocRef;
-};
-
-export const signOutUser = async () => {
-	await signOut(auth);
-};
-
-export const onAuthStateChangedListener = callback => {
-	return onAuthStateChanged(auth, callback);
-};
-signOutUser();
+// signOutUser();
 // const createDummyData = async () => {
 // 	try {
 // 		const rootRef = await addDoc(collection(db, 'root'), {

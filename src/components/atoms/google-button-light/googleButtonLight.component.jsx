@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { signInWithGoogle } from '../../../utils/firebase/firebase.util';
+import { signInWithGoogle } from '../../../utils/firebase/auth/auth.util';
 
 const StyledGoogleButtonLight = styled.button`
 	transition: background-color 0.3s, box-shadow 0.3s;
