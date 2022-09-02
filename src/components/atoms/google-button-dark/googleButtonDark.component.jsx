@@ -1,16 +1,10 @@
-import styled from '@emotion/styled';
 import { ClassNames } from '@emotion/react';
+
+import { signInWithGoogle } from '../../../utils/firebase/auth/auth.util';
 
 const GoogleButtonDark = ({ scale }) => {
 	return (
 		<ClassNames>
-			{/* <SomeComponent
-					wrapperClassName={css({ color: 'green' })}
-					className={css`
-						color: hotpink;
-					`}
-				> */}
-			{/* </SomeComponent> */}
 			{({ css, cx }) => (
 				<button
 					className={css`
@@ -43,6 +37,7 @@ const GoogleButtonDark = ({ scale }) => {
 							transform: scale(${scale.xs});
 						}
 					`}
+					onClick={signInWithGoogle}
 				>
 					<div
 						className={css`
