@@ -42,10 +42,10 @@ export const UserProvider = ({ children }) => {
 	);
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChangedListener(user => {
+		const unsubscribe = onAuthStateChangedListener(async user => {
 			console.log(user);
 			if (user) {
-				createUserProfileDocument(user);
+				await createUserProfileDocument(user);
 			}
 			setCurrentUser(user);
 		});
