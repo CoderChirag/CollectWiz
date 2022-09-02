@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, getDoc, addDoc } from 'firebase/firestore';
+import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import {
 	getAuth,
 	signInWithPopup,
@@ -33,19 +33,40 @@ export const createUserProfileDocument = async (
 	additionalData = {}
 ) => {
 	if (!userAuth) return;
-	const userDocRef = collection(db, 'users', userAuth.uid);
+	const userDocRef = doc(db, 'users', userAuth.uid);
 	try {
 		const snapshot = await getDoc(userDocRef);
 
 		if (!snapshot.exists()) {
-			const { displayName, email } = userAuth;
-			const createdAt = new Date();
+			const {
+				displayName,
+				email,
+				emailVerified,
+				isAnonymous,
+				phoneNumber,
+				photoURL,
+				providerData,
+				providerId,
+				uid,
+			} = userAuth;
+			const metadata = {};
+			for (let i = 0; i < Object.keys(userAuth.metadata).length; i++) {
+				metadata[Object.keys(userAuth.metadata)[i]] =
+					userAuth.metadata[Object.keys(userAuth.metadata)[i]];
+			}
 
 			try {
-				await addDoc(userDocRef, {
+				await setDoc(userDocRef, {
 					displayName,
 					email,
-					createdAt,
+					emailVerified,
+					isAnonymous,
+					metadata,
+					phoneNumber,
+					photoURL,
+					providerData,
+					providerId,
+					uid,
 					...additionalData,
 				});
 			} catch (error) {
@@ -62,9 +83,10 @@ export const signOutUser = async () => {
 	await signOut(auth);
 };
 
-export const onAuthStateChangedListener = callback =>
-	onAuthStateChanged(auth, callback);
-
+export const onAuthStateChangedListener = callback => {
+	return onAuthStateChanged(auth, callback);
+};
+signOutUser();
 // const createDummyData = async () => {
 // 	try {
 // 		const rootRef = await addDoc(collection(db, 'root'), {

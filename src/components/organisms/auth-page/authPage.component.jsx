@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
 import GoogleButtonLight from '../../atoms/google-button-light/googleButtonLight.component';
-import GoogleButtonDark from '../../atoms/google-button-dark/googleButtonDark.component';
+// import GoogleButtonDark from '../../atoms/google-button-dark/googleButtonDark.component';
 
 const StyledHr = styled.hr`
 	width: 40%;

@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
+import { signInWithGoogle } from '../../../utils/firebase/firebase.util';
 
 const StyledGoogleButtonLight = styled.button`
 	transition: background-color 0.3s, box-shadow 0.3s;
 	transform: scale(${props => props.scale.lg});
 
-	padding: 12px 16px 12px 42px;
+	padding: 10px 16px 12px 42px;
 	border: none;
 	border-radius: 3px;
 	box-shadow: 0 -1px 0 rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 0, 0, 0.25);
@@ -54,7 +55,11 @@ const StyledGoogleButtonLight = styled.button`
 
 const GoogleButtonLight = ({ scale }) => {
 	return (
-		<StyledGoogleButtonLight type='button' scale={scale}>
+		<StyledGoogleButtonLight
+			type='button'
+			scale={scale}
+			onClick={signInWithGoogle}
+		>
 			Sign in with Google
 		</StyledGoogleButtonLight>
 	);
