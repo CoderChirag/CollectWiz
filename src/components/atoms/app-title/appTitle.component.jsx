@@ -10,7 +10,7 @@ const AppHeading = styled.img`
 const AppTitle = ({ width, widthMd }) => {
 	return (
 		<AppHeading
-			src='./assets/images/logo.svg'
+			src='/assets/images/logo.svg'
 			width={width}
 			widthMd={widthMd}
 		/>

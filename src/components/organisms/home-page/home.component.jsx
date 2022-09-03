@@ -18,6 +18,7 @@ const StyledHr = styled.hr`
 
 const HomePage = () => {
     const [userProfileMenuAnchorEl, setUserProfileMenuAnchorEl] = useState(null);
+    const userProfileMenuOpen = Boolean(userProfileMenuAnchorEl)
     const handleUserProfileMenuClick = (event) => {
         setUserProfileMenuAnchorEl(event.currentTarget);
     };
@@ -37,7 +38,7 @@ const HomePage = () => {
                         <Menu
                             id="userProfileMenu"
                             anchorEl={userProfileMenuAnchorEl}
-                            open={userProfileMenuAnchorEl}
+                            open={userProfileMenuOpen}
                             handleClose={handleUserProfileMenuClose}
                             MenuListProps={{
                             'aria-labelledby': 'basic-button',
