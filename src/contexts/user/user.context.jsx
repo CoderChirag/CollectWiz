@@ -27,9 +27,7 @@ const userReducer = (state, action) => {
 };
 
 const INITIAL_STATE = {
-	currentUser: localStorage.getItem('currentUser')
-		? JSON.parse(localStorage.getItem('currentUser'))
-		: null,
+	currentUser: null,
 };
 
 export const UserProvider = ({ children }) => {
@@ -37,6 +35,11 @@ export const UserProvider = ({ children }) => {
 
 	const setCurrentUser = useMemo(
 		() => user => {
+			if (user) {
+				window.localStorage.setItem('currentUser', user.uid);
+			} else {
+				window.localStorage.removeItem('currentUser');
+			}
 			dispatch({
 				type: USER_ACTION_TYPES.SET_CURRENT_USER,
 				payload: user,

@@ -1,13 +1,19 @@
 import { useLocation } from 'react-router-dom';
 
-function FileSystemRoute() {
-	const location = useLocation();
+import RouteProtection from '../../components/molecules/route-protection/routeProtection.component';
 
+import { signOutUser } from '../../utils/firebase/auth/auth.util';
+
+const FileSystemRoute = () => {
+	const location = useLocation();
 	return (
-		<div className='App'>
-			<p>{location.pathname}</p>
-		</div>
+		<RouteProtection>
+			<div className='App'>
+				<p>{location.pathname}</p>
+				<button onClick={signOutUser}>Sign Out</button>
+			</div>
+		</RouteProtection>
 	);
-}
+};
 
 export default FileSystemRoute;
