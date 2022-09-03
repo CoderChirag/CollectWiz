@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
-import {Box, Grid, Avatar, Menu, MenuItem} from '@mui/material';
+import {Box, Grid, Avatar, MenuItem} from '@mui/material';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
+import Menu from '../../atoms/menu/menu.component';
+import BottomSearchbar from '../../atoms/bottom-searchbar/bottomSearchbar.component';
 
 import { signOutUser } from "../../../utils/firebase/auth/auth.util";
 
@@ -15,13 +17,12 @@ const StyledHr = styled.hr`
 `;
 
 const HomePage = () => {
-    const [userProfileAnchorEl, setUserProfileAnchorEl] = useState(null);
-    const userProfileOpen = Boolean(userProfileAnchorEl);
-    const handleUserProfileClick = (event) => {
-        setUserProfileAnchorEl(event.currentTarget);
+    const [userProfileMenuAnchorEl, setUserProfileMenuAnchorEl] = useState(null);
+    const handleUserProfileMenuClick = (event) => {
+        setUserProfileMenuAnchorEl(event.currentTarget);
     };
-    const handleUserProfileClose = () => {
-        setUserProfileAnchorEl(null);
+    const handleUserProfileMenuClose = () => {
+        setUserProfileMenuAnchorEl(null);
     };
 
 	return (
@@ -32,12 +33,12 @@ const HomePage = () => {
                         <AppTitle width='8rem' widthMd='8rem' />
                     </Grid>
                     <Grid item xs={2} md={1}>
-                        <Avatar src="/broken-image.jpg" onClick={handleUserProfileClick}/>
+                        <Avatar src="/broken-image.jpg" onClick={handleUserProfileMenuClick}/>
                         <Menu
-                            id="userProfileDropdown"
-                            anchorEl={userProfileAnchorEl}
-                            open={userProfileOpen}
-                            onClose={handleUserProfileClose}
+                            id="userProfileMenu"
+                            anchorEl={userProfileMenuAnchorEl}
+                            open={userProfileMenuAnchorEl}
+                            handleClose={handleUserProfileMenuClose}
                             MenuListProps={{
                             'aria-labelledby': 'basic-button',
                             }}
@@ -48,6 +49,7 @@ const HomePage = () => {
                 </Grid>
                 <StyledHr />
             </Box>
+            <BottomSearchbar />
         </>
 	);
 };
