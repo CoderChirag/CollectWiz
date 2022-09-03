@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import {Box, Grid} from '@mui/material';
+import {Box, Grid, Avatar} from '@mui/material';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
 
@@ -18,8 +18,11 @@ const HomePage = () => {
         <>
             <Box>
                 <Grid container alignItems='center'>
-                    <Grid item xs={11}>
-                        <AppTitle width='8rem' widthMd='10rem' />
+                    <Grid item xs={10} md={11} >
+                        <AppTitle width='8rem' widthMd='8rem' />
+                    </Grid>
+                    <Grid item xs={2} md={1}>
+                        <Avatar src="/broken-image.jpg" />
                     </Grid>
                 </Grid>
                 <StyledHr />
