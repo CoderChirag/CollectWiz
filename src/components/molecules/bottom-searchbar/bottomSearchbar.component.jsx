@@ -45,26 +45,26 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const BottomSearchbar = () => {
 	return (
-		<>
-			<Search
-				sx={{
-					position: 'fixed',
-					top: 'auto',
-					bottom: '15px',
-					width: { xs: '80%', sm: '70%' },
-					left: { xs: '10%', sm: '15%' },
-				}}
-			>
-				<SearchIconWrapper>
-					<SearchIcon />
-				</SearchIconWrapper>
-				<StyledInputBase
-					placeholder='Search…'
-					inputProps={{ 'aria-label': 'search' }}
-					sx={{ width: '100%' }}
-				/>
-			</Search>
-		</>
+		// <SearchWrapper>
+		<Search
+			sx={{
+				position: 'sticky',
+				top: 'auto',
+				bottom: '15px',
+				width: { xs: '80%', sm: '70%' },
+				left: { xs: '10%', sm: '15%' },
+			}}
+		>
+			<SearchIconWrapper>
+				<SearchIcon />
+			</SearchIconWrapper>
+			<StyledInputBase
+				placeholder='Search…'
+				inputProps={{ 'aria-label': 'search' }}
+				sx={{ width: '100%' }}
+			/>
+		</Search>
+		// </SearchWrapper>
 	);
 };
 
