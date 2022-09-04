@@ -1,42 +1,105 @@
 import { useState, useEffect, useContext, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { UserContext } from '../../../contexts/user/user.context';
-
-import { Box, Grid, Typography, Badge } from '@mui/material';
+import { Link } from 'react-router-dom';
+import {
+	Box,
+	Grid,
+	Typography,
+	Badge,
+	DialogContent,
+	DialogActions,
+	Button,
+	ToggleButton as MuiToggleButton,
+	TextField,
+} from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import DescriptionIcon from '@mui/icons-material/Description';
 import AddIcon from '@mui/icons-material/Add';
 
+import Modal from '../modal/modal.component';
+import ModalTitle from '../../atoms/modal-title/modalTitle.component';
+import ToggleButton from '../../atoms/toggle-button/toggleButton.component';
+
+import { UserContext } from '../../../contexts/user/user.context';
 import { fetchDataFromFs } from '../../../utils/firebase/fs/fs.util';
+import { createNewFolder } from '../../../utils/firebase/transactions/transactions.util';
 
 const FilesystemArea = () => {
 	const location = useLocation();
+	const [currPath, setCurrPath] = useState(
+		location.pathname[location.pathname.length - 1] === '/'
+			? location.pathname
+					.split('/')
+					.slice(1, location.pathname.split('/').length - 1)
+					.join('.')
+			: location.pathname.split('/').slice(1).join('.')
+	);
 	const { currentUser } = useContext(UserContext);
 	const [fsData, setFsData] = useState(null);
+	const [modalOpen, setModalOpen] = useState(false);
+	const [creationType, setCreationType] = useState('folder');
+
+	const handleModalOpen = () => {
+		setModalOpen(true);
+	};
+
+	const handleModalClose = () => {
+		setModalOpen(false);
+	};
+
+	const handleCreationTypeChange = (event, newCreationType) => {
+		setCreationType(newCreationType);
+	};
 
 	const fetchFsData = useMemo(
 		() => async () => {
-			const path =
-				location.pathname[location.pathname.length - 1] === '/'
-					? location.pathname
-							.split('/')
-							.slice(1, location.pathname.split('/').length - 1)
-							.join('.')
-					: location.pathname.split('/').slice(1).join('.');
-			const data = await fetchDataFromFs(currentUser?.uid, path);
+			const data = await fetchDataFromFs(currentUser?.uid, currPath);
 			if (data) {
 				data.subfolders.sort((a, b) => a.createdAt - b.createdAt);
 				data.files.sort((a, b) => a.createdAt - b.createdAt);
 			}
 			setFsData(data);
 		},
-		[currentUser, location]
+		[currentUser, currPath]
 	);
+
+	const createFolder = async () => {
+		const folderName = document
+			.getElementById('new-folder-name')
+			.value.trim()
+			.split('.')[0];
+		if (!folderName) return;
+		if (fsData?.subfolders.find(folder => folder.name === folderName))
+			return;
+		const folderData = await createNewFolder(
+			currentUser?.uid,
+			currPath,
+			folderName
+		);
+		if (folderData) {
+			setFsData(prevFsData => ({
+				...prevFsData,
+				subfolders: [...prevFsData.subfolders, folderData],
+			}));
+		}
+		setModalOpen(false);
+	};
 
 	useEffect(() => {
 		fetchFsData();
 	}, [fetchFsData]);
+
+	useEffect(() => {
+		setCurrPath(
+			location.pathname[location.pathname.length - 1] === '/'
+				? location.pathname
+						.split('/')
+						.slice(1, location.pathname.split('/').length - 1)
+						.join('.')
+				: location.pathname.split('/').slice(1).join('.')
+		);
+	}, [location]);
 
 	return (
 		<>
@@ -65,36 +128,46 @@ const FilesystemArea = () => {
 					{fsData && (
 						<>
 							{fsData.subfolders.map(folder => (
-								<Grid
+								<Link
+									to={`/${currPath.split('.').join('/')}/${
+										folder.name
+									}`}
 									key={folder.name}
-									item
-									sx={{
-										padding: {
-											xs: '0 1.2rem !important',
-											sm: '0 2rem !important',
-										},
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										marginBottom: '30px',
+									style={{
+										textDecoration: 'none',
+										color: 'inherit',
 									}}
 								>
-									<FolderIcon
+									<Grid
+										item
 										sx={{
-											fontSize: {
-												md: '5rem',
-												xs: '4rem',
+											padding: {
+												xs: '0 1.2rem !important',
+												sm: '0 2rem !important',
 											},
-											color: '#22a6ff',
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'center',
+											marginBottom: '30px',
 										}}
-									/>
-									<Typography
-										variant='p'
-										sx={{ fontSize: '1.2rem' }}
 									>
-										{folder.name}
-									</Typography>
-								</Grid>
+										<FolderIcon
+											sx={{
+												fontSize: {
+													md: '5rem',
+													xs: '4rem',
+												},
+												color: '#22a6ff',
+											}}
+										/>
+										<Typography
+											variant='p'
+											sx={{ fontSize: '1.2rem' }}
+										>
+											{folder.name}
+										</Typography>
+									</Grid>
+								</Link>
 							))}
 							{fsData.files.map(file => (
 								<Grid
@@ -155,6 +228,7 @@ const FilesystemArea = () => {
 						}}
 					>
 						<AddIcon
+							onClick={handleModalOpen}
 							sx={{
 								fontSize: {
 									md: '6rem',
@@ -173,6 +247,60 @@ const FilesystemArea = () => {
 								},
 							}}
 						/>
+						<Modal open={modalOpen} handleClose={handleModalClose}>
+							<ModalTitle
+								id='customized-dialog-title'
+								onClose={handleModalClose}
+								sx={{ textAlign: 'center' }}
+							>
+								<ToggleButton
+									value={creationType}
+									handleChange={handleCreationTypeChange}
+								>
+									<MuiToggleButton value='folder'>
+										Folder
+									</MuiToggleButton>
+									<MuiToggleButton value='file'>
+										File
+									</MuiToggleButton>
+								</ToggleButton>
+							</ModalTitle>
+							<DialogContent>
+								{/* <DialogContentText> */}
+								<Typography variant='h6' sx={{ mb: '20px' }}>
+									Create New{' '}
+									{creationType.charAt(0).toUpperCase() +
+										creationType.slice(1)}
+								</Typography>
+								{/* </DialogContentText> */}
+								<TextField
+									autoFocus
+									margin='dense'
+									id={`new-${creationType}-name`}
+									label={`${
+										creationType.charAt(0).toUpperCase() +
+										creationType.slice(1)
+									} Name`}
+									type='text'
+									fullWidth
+									variant='standard'
+								/>
+							</DialogContent>
+							<DialogActions>
+								<Button
+									autoFocus
+									onClick={
+										creationType === 'folder'
+											? createFolder
+											: null
+									}
+								>
+									Create{' '}
+									{creationType.charAt(0).toUpperCase() +
+										creationType.slice(1)}
+								</Button>
+							</DialogActions>
+						</Modal>
 					</Grid>
 				</Grid>
 			</Box>
