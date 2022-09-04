@@ -2,6 +2,7 @@ import { runTransaction, doc } from 'firebase/firestore';
 
 import { db } from '../firebase.util';
 import { signOutUser } from '../auth/auth.util';
+import { fsDataConverter } from '../converters/converters.util';
 
 export const createNewUser = async (userAuth, additionalData = {}) => {
 	if (!userAuth) return;
@@ -48,7 +49,9 @@ export const createNewUser = async (userAuth, additionalData = {}) => {
 
 				// Creating New User FS
 				const fsDocRef = doc(db, 'fs', uid);
-				const rootDocRef = doc(fsDocRef, 'root', 'data');
+				const rootDocRef = doc(fsDocRef, 'root', 'data').withConverter(
+					fsDataConverter
+				);
 				transaction.set(rootDocRef, {
 					subfolders: [],
 					files: [],

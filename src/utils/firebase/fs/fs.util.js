@@ -1,18 +1,22 @@
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
-import { db, auth } from '../firebase.util';
+import { db } from '../firebase.util';
+import { fsDataConverter } from '../converters/converters.util';
 
 export const createNewUserFs = async uid => {
 	const fsDocRef = doc(db, 'fs', uid);
 	try {
 		const fsDocSnapshot = await getDoc(fsDocRef);
 		if (!fsDocSnapshot.exists()) {
-			const rootDocRef = doc(fsDocRef, 'root', 'data');
+			const rootDocRef = doc(fsDocRef, 'root', 'data').withConverter(
+				fsDataConverter
+			);
 			try {
 				await setDoc(rootDocRef, {
 					subfolders: [],
 					files: [],
 				});
+				console.log('done');
 			} catch (e) {
 				console.log('Error creating root data', e.message);
 			}
@@ -25,10 +29,13 @@ export const createNewUserFs = async uid => {
 
 export const fetchDataFromFs = async (uid, path) => {
 	if (!uid) return;
-	const fsDocRef = doc(db, 'fs', uid, path, 'data');
+	const fsDocRef = doc(db, 'fs', uid, path, 'data').withConverter(
+		fsDataConverter
+	);
 	try {
 		const fsDoc = await getDoc(fsDocRef);
 		if (fsDoc.exists()) {
+			console.log(fsDoc.data());
 			return fsDoc.data();
 		} else {
 			return {
