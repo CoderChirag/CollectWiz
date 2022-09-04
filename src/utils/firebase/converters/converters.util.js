@@ -8,30 +8,6 @@ export const fsDataConverter = {
 		data.files.forEach(file => {
 			filesMap[file.name] = file;
 		});
-		subfoldersMap.a = {
-			name: 'a',
-			createdAt: Date.now(),
-			creationTime: new Date(),
-		};
-		subfoldersMap.b = {
-			name: 'b',
-			createdAt: Date.now(),
-			creationTime: new Date(),
-		};
-		filesMap.ab = {
-			name: 'ab',
-			ext: 'txt',
-			nameWithExt: 'ab.txt',
-			createdAt: Date.now(),
-			creationTime: new Date(),
-		};
-		filesMap.ba = {
-			name: 'ba',
-			ext: 'pdf',
-			nameWithExt: 'ba.pdf',
-			createdAt: Date.now(),
-			creationTime: new Date(),
-		};
 		return {
 			subfolders: subfoldersMap,
 			files: filesMap,

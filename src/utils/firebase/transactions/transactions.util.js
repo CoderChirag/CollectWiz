@@ -63,3 +63,48 @@ export const createNewUser = async (userAuth, additionalData = {}) => {
 		signOutUser();
 	}
 };
+
+export const createNewFolder = async (uid, path, folderName) => {
+	if (!uid) return;
+	try {
+		let folderData = {};
+		await runTransaction(db, async transaction => {
+			const fsDocRef = doc(db, 'fs', uid, path, 'data').withConverter(
+				fsDataConverter
+			);
+			const fsDoc = await transaction.get(fsDocRef);
+			folderData = {
+				name: folderName,
+				createdAt: Date.now(),
+				creationTime: new Date(),
+			};
+			if (fsDoc.exists()) {
+				const { subfolders, files } = fsDoc.data();
+				transaction.set(fsDocRef, {
+					subfolders: [...subfolders, folderData],
+					files,
+				});
+			} else {
+				transaction.set(fsDocRef, {
+					subfolders: [folderData],
+					files: [],
+				});
+			}
+			const newFolderDocRef = doc(
+				db,
+				'fs',
+				uid,
+				`${path}.${folderName}`,
+				'data'
+			).withConverter(fsDataConverter);
+			transaction.set(newFolderDocRef, {
+				subfolders: [],
+				files: [],
+			});
+		});
+		return folderData;
+	} catch (e) {
+		console.log('Transaction failed: ', e);
+		return null;
+	}
+};

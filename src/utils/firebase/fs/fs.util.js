@@ -35,7 +35,6 @@ export const fetchDataFromFs = async (uid, path) => {
 	try {
 		const fsDoc = await getDoc(fsDocRef);
 		if (fsDoc.exists()) {
-			console.log(fsDoc.data());
 			return fsDoc.data();
 		} else {
 			return {
