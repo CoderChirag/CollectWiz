@@ -13,6 +13,7 @@ import {
 	ToggleButton as MuiToggleButton,
 	TextField,
 	MenuItem,
+	CircularProgress,
 } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -41,6 +42,7 @@ const FilesystemArea = () => {
 			: location.pathname.split('/').slice(1).join('.')
 	);
 	const { currentUser } = useContext(UserContext);
+	const [loading, setLoading] = useState(true);
 	const [fsData, setFsData] = useState(null);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [creationType, setCreationType] = useState('folder');
@@ -68,12 +70,16 @@ const FilesystemArea = () => {
 
 	const fetchFsData = useMemo(
 		() => async () => {
-			const data = await fetchDataFromFs(currentUser?.uid, currPath);
-			if (data) {
-				data.subfolders.sort((a, b) => a.createdAt - b.createdAt);
-				data.files.sort((a, b) => a.createdAt - b.createdAt);
+			if (currentUser) {
+				setLoading(true);
+				const data = await fetchDataFromFs(currentUser?.uid, currPath);
+				if (data) {
+					data.subfolders.sort((a, b) => a.createdAt - b.createdAt);
+					data.files.sort((a, b) => a.createdAt - b.createdAt);
+				}
+				setFsData(data);
+				setLoading(false);
 			}
-			setFsData(data);
 		},
 		[currentUser, currPath]
 	);
@@ -164,127 +170,161 @@ const FilesystemArea = () => {
 					},
 				}}
 			>
-				<Grid
-					container
-					spacing={2}
-					sx={{
-						justifyContent: {
-							lg: 'flex-start',
-							xs: 'space-evenly',
-						},
-					}}
-				>
-					{fsData && (
-						<>
-							{fsData.subfolders.map(folder => (
-								<Link
-									to={`/${currPath.split('.').join('/')}/${
-										folder.name
-									}`}
-									key={folder.name}
-									style={{
-										textDecoration: 'none',
-										color: 'inherit',
-									}}
-								>
-									<Grid
-										item
-										sx={{
-											padding: {
-												xs: '0 1.2rem !important',
-												sm: '0 2rem !important',
-											},
-											display: 'flex',
-											flexDirection: 'column',
-											alignItems: 'center',
-											marginBottom: '30px',
+				{loading ? (
+					<Grid
+						container
+						spacing={2}
+						justifyContent='center'
+						alignItems='center'
+						sx={{
+							height: '100%',
+							width: '100%',
+						}}
+					>
+						<CircularProgress />
+					</Grid>
+				) : (
+					<Grid
+						container
+						spacing={2}
+						sx={{
+							justifyContent: {
+								lg: 'flex-start',
+								xs: 'space-evenly',
+							},
+						}}
+					>
+						{fsData && (
+							<>
+								{fsData.subfolders.map(folder => (
+									<Link
+										to={`/${currPath
+											.split('.')
+											.join('/')}/${folder.name}`}
+										key={folder.name}
+										style={{
+											textDecoration: 'none',
+											color: 'inherit',
 										}}
-										aria-controls={
-											contextMenuOpen
-												? 'context-menu'
-												: undefined
-										}
-										aria-haspopup='true'
-										aria-expanded={
-											contextMenuOpen ? 'true' : undefined
-										}
-										data-type='folder'
-										onContextMenu={handleContextMenuClick}
 									>
-										<FolderIcon
+										<Grid
+											item
 											sx={{
-												fontSize: {
-													md: '5rem',
-													xs: '4rem',
+												padding: {
+													xs: '0 1.2rem !important',
+													sm: '0 2rem !important',
 												},
-												color: '#22a6ff',
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'center',
+												marginBottom: '30px',
 											}}
-										/>
-										<Typography
-											variant='p'
-											sx={{ fontSize: '1.2rem' }}
+											aria-controls={
+												contextMenuOpen
+													? 'context-menu'
+													: undefined
+											}
+											aria-haspopup='true'
+											aria-expanded={
+												contextMenuOpen
+													? 'true'
+													: undefined
+											}
+											data-type='folder'
+											onContextMenu={
+												handleContextMenuClick
+											}
 										>
-											{folder.name}
-										</Typography>
-									</Grid>
-									<Menu
-										id={`context-menu-${folder.name}`}
-										anchorEl={contextMenuAnchorEl}
-										open={contextMenuOpen}
-										handleClose={handleContextMenuClose}
-										MenuListProps={{
-											'aria-labelledby': 'context-menu',
-										}}
-									>
-										<MenuItem
-											onClick={handleContextMenuClose}
-										>
-											Delete
-										</MenuItem>
-										<MenuItem
-											onClick={handleContextMenuClose}
-										>
-											Rename
-										</MenuItem>
-									</Menu>
-								</Link>
-							))}
-							{fsData.files.map(file => (
-								<Fragment key={file.nameWithExt}>
-									<Grid
-										item
-										sx={{
-											padding: {
-												xs: '0 1.2rem !important',
-												sm: '0 2rem !important',
-											},
-											display: 'flex',
-											flexDirection: 'column',
-											alignItems: 'center',
-											marginBottom: '30px',
-										}}
-										aria-controls={
-											contextMenuOpen
-												? 'context-menu'
-												: undefined
-										}
-										aria-haspopup='true'
-										aria-expanded={
-											contextMenuOpen ? 'true' : undefined
-										}
-										data-type='file'
-										onContextMenu={handleContextMenuClick}
-									>
-										{file.ext ? (
-											<Badge
-												badgeContent={`.${file.ext}`}
-												anchorOrigin={{
-													vertical: 'bottom',
-													horizontal: 'left',
+											<FolderIcon
+												sx={{
+													fontSize: {
+														md: '5rem',
+														xs: '4rem',
+													},
+													color: '#22a6ff',
 												}}
-												color='red'
-												overlap='circular'
+											/>
+											<Typography
+												variant='p'
+												sx={{ fontSize: '1.2rem' }}
 											>
+												{folder.name}
+											</Typography>
+										</Grid>
+										<Menu
+											id={`context-menu-${folder.name}`}
+											anchorEl={contextMenuAnchorEl}
+											open={contextMenuOpen}
+											handleClose={handleContextMenuClose}
+											MenuListProps={{
+												'aria-labelledby':
+													'context-menu',
+											}}
+										>
+											<MenuItem
+												onClick={handleContextMenuClose}
+											>
+												Delete
+											</MenuItem>
+											<MenuItem
+												onClick={handleContextMenuClose}
+											>
+												Rename
+											</MenuItem>
+										</Menu>
+									</Link>
+								))}
+								{fsData.files.map(file => (
+									<Fragment key={file.nameWithExt}>
+										<Grid
+											item
+											sx={{
+												padding: {
+													xs: '0 1.2rem !important',
+													sm: '0 2rem !important',
+												},
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'center',
+												marginBottom: '30px',
+											}}
+											aria-controls={
+												contextMenuOpen
+													? 'context-menu'
+													: undefined
+											}
+											aria-haspopup='true'
+											aria-expanded={
+												contextMenuOpen
+													? 'true'
+													: undefined
+											}
+											data-type='file'
+											onContextMenu={
+												handleContextMenuClick
+											}
+										>
+											{file.ext ? (
+												<Badge
+													badgeContent={`.${file.ext}`}
+													anchorOrigin={{
+														vertical: 'bottom',
+														horizontal: 'left',
+													}}
+													color='red'
+													overlap='circular'
+												>
+													<DescriptionIcon
+														sx={{
+															fontSize: {
+																md: '5rem',
+																xs: '4rem',
+															},
+															color: '#9d9d9d',
+														}}
+													/>
+												</Badge>
+											) : (
 												<DescriptionIcon
 													sx={{
 														fontSize: {
@@ -294,139 +334,138 @@ const FilesystemArea = () => {
 														color: '#9d9d9d',
 													}}
 												/>
-											</Badge>
-										) : (
-											<DescriptionIcon
-												sx={{
-													fontSize: {
-														md: '5rem',
-														xs: '4rem',
-													},
-													color: '#9d9d9d',
-												}}
-											/>
-										)}
-										<Typography
-											variant='p'
-											sx={{ fontSize: '1.2rem' }}
+											)}
+											<Typography
+												variant='p'
+												sx={{ fontSize: '1.2rem' }}
+											>
+												{file.nameWithExt}
+											</Typography>
+										</Grid>
+										<Menu
+											id={`context-menu-${file.nameWithExt}`}
+											anchorEl={contextMenuAnchorEl}
+											open={contextMenuOpen}
+											handleClose={handleContextMenuClose}
+											MenuListProps={{
+												'aria-labelledby':
+													'context-menu',
+											}}
 										>
-											{file.nameWithExt}
-										</Typography>
-									</Grid>
-									<Menu
-										id={`context-menu-${file.nameWithExt}`}
-										anchorEl={contextMenuAnchorEl}
-										open={contextMenuOpen}
-										handleClose={handleContextMenuClose}
-										MenuListProps={{
-											'aria-labelledby': 'context-menu',
-										}}
-									>
-										<MenuItem
-											onClick={handleContextMenuClose}
-										>
-											Delete
-										</MenuItem>
-										<MenuItem
-											onClick={handleContextMenuClose}
-										>
-											Rename
-										</MenuItem>
-									</Menu>
-								</Fragment>
-							))}
-						</>
-					)}
-					<Grid
-						item
-						sx={{
-							padding: {
-								xs: '0 1.2rem !important',
-								sm: '0 2rem !important',
-							},
-							display: 'flex',
-							flexDirection: 'column',
-							alignItems: 'center',
-							justifyContent: 'center',
-							marginBottom: '30px',
-						}}
-					>
-						<AddIcon
-							onClick={handleModalOpen}
+											<MenuItem
+												onClick={handleContextMenuClose}
+											>
+												Delete
+											</MenuItem>
+											<MenuItem
+												onClick={handleContextMenuClose}
+											>
+												Rename
+											</MenuItem>
+										</Menu>
+									</Fragment>
+								))}
+							</>
+						)}
+						<Grid
+							item
 							sx={{
-								fontSize: {
-									md: '6rem',
-									xs: '5rem',
+								padding: {
+									xs: '0 1.2rem !important',
+									sm: '0 2rem !important',
 								},
-								width: { md: '5.5rem', xs: '4.5rem' },
-								color: '#afb0b1',
-								border: '1px dashed #9d9d9d',
-								borderRadius: '10px',
-								padding: '18px',
-								marginLeft: '15px',
-								cursor: 'pointer',
-								transition: 'all 0.3s ease-in-out',
-								'&:hover': {
-									transform: 'scale(1.2)',
-								},
+								display: 'flex',
+								flexDirection: 'column',
+								alignItems: 'center',
+								justifyContent: 'center',
+								marginBottom: '30px',
 							}}
-						/>
-						<Modal open={modalOpen} handleClose={handleModalClose}>
-							<ModalTitle
-								id='customized-dialog-title'
-								onClose={handleModalClose}
-								sx={{ textAlign: 'center' }}
+						>
+							<AddIcon
+								onClick={handleModalOpen}
+								sx={{
+									fontSize: {
+										md: '6rem',
+										xs: '5rem',
+									},
+									width: { md: '5.5rem', xs: '4.5rem' },
+									color: '#afb0b1',
+									border: '1px dashed #9d9d9d',
+									borderRadius: '10px',
+									padding: '18px',
+									marginLeft: '15px',
+									cursor: 'pointer',
+									transition: 'all 0.3s ease-in-out',
+									'&:hover': {
+										transform: 'scale(1.2)',
+									},
+								}}
+							/>
+							<Modal
+								open={modalOpen}
+								handleClose={handleModalClose}
 							>
-								<ToggleButton
-									value={creationType}
-									handleChange={handleCreationTypeChange}
+								<ModalTitle
+									id='customized-dialog-title'
+									onClose={handleModalClose}
+									sx={{ textAlign: 'center' }}
 								>
-									<MuiToggleButton value='folder'>
-										Folder
-									</MuiToggleButton>
-									<MuiToggleButton value='file'>
-										File
-									</MuiToggleButton>
-								</ToggleButton>
-							</ModalTitle>
-							<DialogContent>
-								{/* <DialogContentText> */}
-								<Typography variant='h6' sx={{ mb: '20px' }}>
-									Create New{' '}
-									{creationType.charAt(0).toUpperCase() +
-										creationType.slice(1)}
-								</Typography>
-								{/* </DialogContentText> */}
-								<TextField
-									autoFocus
-									margin='dense'
-									id={`new-${creationType}-name`}
-									label={`${
-										creationType.charAt(0).toUpperCase() +
-										creationType.slice(1)
-									} Name`}
-									type='text'
-									fullWidth
-									variant='standard'
-								/>
-							</DialogContent>
-							<DialogActions>
-								<Button
-									autoFocus
-									onClick={
-										creationType === 'folder'
-											? createFolder
-											: createFile
-									}
-								>
-									Create{' '}
-									{creationType.charAt(0).toUpperCase() +
-										creationType.slice(1)}
-								</Button>
-							</DialogActions>
-						</Modal>
+									<ToggleButton
+										value={creationType}
+										handleChange={handleCreationTypeChange}
+									>
+										<MuiToggleButton value='folder'>
+											Folder
+										</MuiToggleButton>
+										<MuiToggleButton value='file'>
+											File
+										</MuiToggleButton>
+									</ToggleButton>
+								</ModalTitle>
+								<DialogContent>
+									{/* <DialogContentText> */}
+									<Typography
+										variant='h6'
+										sx={{ mb: '20px' }}
+									>
+										Create New{' '}
+										{creationType.charAt(0).toUpperCase() +
+											creationType.slice(1)}
+									</Typography>
+									{/* </DialogContentText> */}
+									<TextField
+										autoFocus
+										margin='dense'
+										id={`new-${creationType}-name`}
+										label={`${
+											creationType
+												.charAt(0)
+												.toUpperCase() +
+											creationType.slice(1)
+										} Name`}
+										type='text'
+										fullWidth
+										variant='standard'
+									/>
+								</DialogContent>
+								<DialogActions>
+									<Button
+										autoFocus
+										onClick={
+											creationType === 'folder'
+												? createFolder
+												: createFile
+										}
+									>
+										Create{' '}
+										{creationType.charAt(0).toUpperCase() +
+											creationType.slice(1)}
+									</Button>
+								</DialogActions>
+							</Modal>
+						</Grid>
 					</Grid>
-				</Grid>
+				)}
 			</Box>
 		</>
 	);
