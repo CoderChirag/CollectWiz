@@ -108,3 +108,39 @@ export const createNewFolder = async (uid, path, folderName) => {
 		return null;
 	}
 };
+
+export const createNewFile = async (uid, path, fileName) => {
+	if (!uid) return;
+	try {
+		let fileData = {};
+		await runTransaction(db, async transaction => {
+			const fsDocRef = doc(db, 'fs', uid, path, 'data').withConverter(
+				fsDataConverter
+			);
+			const fsDoc = await transaction.get(fsDocRef);
+			fileData = {
+				name: fileName.split('.')[0],
+				ext: fileName.split('.')[1] || '',
+				nameWithExt: fileName,
+				createdAt: Date.now(),
+				creationTime: new Date(),
+			};
+			if (fsDoc.exists()) {
+				const { subfolders, files } = fsDoc.data();
+				transaction.set(fsDocRef, {
+					subfolders,
+					files: [...files, fileData],
+				});
+			} else {
+				transaction.set(fsDocRef, {
+					subfolders: [],
+					files: [fileData],
+				});
+			}
+		});
+		return fileData;
+	} catch (e) {
+		console.log('Transaction failed: ', e);
+		return null;
+	}
+};
