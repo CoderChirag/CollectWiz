@@ -1,8 +1,8 @@
+import LandingPage from "../../components/organisms/auth-page/landingPage.component";
 function HomeRoute() {
 	return (
 		<div className='App'>
-			<h1>Hello World</h1>
-			<p>This is the Home Page</p>
+			<LandingPage></LandingPage>
 		</div>
 	);
 }
