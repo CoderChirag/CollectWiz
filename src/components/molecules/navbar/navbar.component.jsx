@@ -29,20 +29,34 @@ const Navbar = () => {
 		<Box>
 			<Grid container alignItems='center'>
 				<Grid item xs={10} md={11}>
-					<AppTitle width='8rem' widthMd='8rem' />
+					<AppTitle
+						width='8rem'
+						widthMd='8rem'
+						sx={{ cursor: 'pointer' }}
+						href='/root'
+					/>
 				</Grid>
 				<Grid item xs={2} md={1}>
 					<Avatar
+						id='user-profile-icon'
+						aria-controls={
+							userProfileMenuOpen
+								? 'user-profile-menu'
+								: undefined
+						}
+						aria-haspopup='true'
+						aria-expanded={userProfileMenuOpen ? 'true' : undefined}
 						src='/broken-image.jpg'
 						onClick={handleUserProfileMenuClick}
+						sx={{ cursor: 'pointer' }}
 					/>
 					<Menu
-						id='userProfileMenu'
+						id='user-profile-menu'
 						anchorEl={userProfileMenuAnchorEl}
 						open={userProfileMenuOpen}
 						handleClose={handleUserProfileMenuClose}
 						MenuListProps={{
-							'aria-labelledby': 'basic-button',
+							'aria-labelledby': 'user-profile-icon',
 						}}
 					>
 						<MenuItem onClick={signOutUser}>Logout</MenuItem>
