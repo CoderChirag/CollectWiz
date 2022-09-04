@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useMemo } from 'react';
+import { useState, useEffect, useContext, useMemo, Fragment } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Link } from 'react-router-dom';
@@ -12,6 +12,7 @@ import {
 	Button,
 	ToggleButton as MuiToggleButton,
 	TextField,
+	MenuItem,
 } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import DescriptionIcon from '@mui/icons-material/Description';
@@ -20,10 +21,14 @@ import AddIcon from '@mui/icons-material/Add';
 import Modal from '../modal/modal.component';
 import ModalTitle from '../../atoms/modal-title/modalTitle.component';
 import ToggleButton from '../../atoms/toggle-button/toggleButton.component';
+import Menu from '../menu/menu.component';
 
 import { UserContext } from '../../../contexts/user/user.context';
 import { fetchDataFromFs } from '../../../utils/firebase/fs/fs.util';
-import { createNewFolder } from '../../../utils/firebase/transactions/transactions.util';
+import {
+	createNewFolder,
+	createNewFile,
+} from '../../../utils/firebase/transactions/transactions.util';
 
 const FilesystemArea = () => {
 	const location = useLocation();
@@ -39,6 +44,15 @@ const FilesystemArea = () => {
 	const [fsData, setFsData] = useState(null);
 	const [modalOpen, setModalOpen] = useState(false);
 	const [creationType, setCreationType] = useState('folder');
+	const [contextMenuAnchorEl, setContextMenuAnchorEl] = useState(null);
+	const contextMenuOpen = Boolean(contextMenuAnchorEl);
+	const handleContextMenuClick = e => {
+		e.preventDefault();
+		setContextMenuAnchorEl(e.currentTarget);
+	};
+	const handleContextMenuClose = () => {
+		setContextMenuAnchorEl(null);
+	};
 
 	const handleModalOpen = () => {
 		setModalOpen(true);
@@ -81,6 +95,41 @@ const FilesystemArea = () => {
 			setFsData(prevFsData => ({
 				...prevFsData,
 				subfolders: [...prevFsData.subfolders, folderData],
+			}));
+		}
+		setModalOpen(false);
+	};
+
+	const createFile = async () => {
+		const fileName =
+			document.getElementById('new-file-name').value.trim().split('.')
+				.length > 1
+				? document
+						.getElementById('new-file-name')
+						.value.trim()
+						.split('.')[1]
+					? document
+							.getElementById('new-file-name')
+							.value.trim()
+							.split('.')
+							.slice(0, 2)
+							.join('.')
+					: document
+							.getElementById('new-file-name')
+							.value.trim()
+							.split('.')[0]
+				: document.getElementById('new-file-name').value.trim();
+		if (!fileName) return;
+		if (fsData?.files.find(file => file.nameWithExt === fileName)) return;
+		const fileData = await createNewFile(
+			currentUser?.uid,
+			currPath,
+			fileName
+		);
+		if (fileData) {
+			setFsData(prevFsData => ({
+				...prevFsData,
+				files: [...prevFsData.files, fileData],
 			}));
 		}
 		setModalOpen(false);
@@ -150,6 +199,17 @@ const FilesystemArea = () => {
 											alignItems: 'center',
 											marginBottom: '30px',
 										}}
+										aria-controls={
+											contextMenuOpen
+												? 'context-menu'
+												: undefined
+										}
+										aria-haspopup='true'
+										aria-expanded={
+											contextMenuOpen ? 'true' : undefined
+										}
+										data-type='folder'
+										onContextMenu={handleContextMenuClick}
 									>
 										<FolderIcon
 											sx={{
@@ -167,49 +227,113 @@ const FilesystemArea = () => {
 											{folder.name}
 										</Typography>
 									</Grid>
+									<Menu
+										id={`context-menu-${folder.name}`}
+										anchorEl={contextMenuAnchorEl}
+										open={contextMenuOpen}
+										handleClose={handleContextMenuClose}
+										MenuListProps={{
+											'aria-labelledby': 'context-menu',
+										}}
+									>
+										<MenuItem
+											onClick={handleContextMenuClose}
+										>
+											Delete
+										</MenuItem>
+										<MenuItem
+											onClick={handleContextMenuClose}
+										>
+											Rename
+										</MenuItem>
+									</Menu>
 								</Link>
 							))}
 							{fsData.files.map(file => (
-								<Grid
-									key={file.nameWithExt}
-									item
-									sx={{
-										padding: {
-											xs: '0 1.2rem !important',
-											sm: '0 2rem !important',
-										},
-										display: 'flex',
-										flexDirection: 'column',
-										alignItems: 'center',
-										marginBottom: '30px',
-									}}
-								>
-									<Badge
-										badgeContent={file.ext}
-										anchorOrigin={{
-											vertical: 'bottom',
-											horizontal: 'left',
+								<Fragment key={file.nameWithExt}>
+									<Grid
+										item
+										sx={{
+											padding: {
+												xs: '0 1.2rem !important',
+												sm: '0 2rem !important',
+											},
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'center',
+											marginBottom: '30px',
 										}}
-										color='red'
-										overlap='circular'
+										aria-controls={
+											contextMenuOpen
+												? 'context-menu'
+												: undefined
+										}
+										aria-haspopup='true'
+										aria-expanded={
+											contextMenuOpen ? 'true' : undefined
+										}
+										data-type='file'
+										onContextMenu={handleContextMenuClick}
 									>
-										<DescriptionIcon
-											sx={{
-												fontSize: {
-													md: '5rem',
-													xs: '4rem',
-												},
-												color: '#9d9d9d',
-											}}
-										/>
-									</Badge>
-									<Typography
-										variant='p'
-										sx={{ fontSize: '1.2rem' }}
+										{file.ext ? (
+											<Badge
+												badgeContent={`.${file.ext}`}
+												anchorOrigin={{
+													vertical: 'bottom',
+													horizontal: 'left',
+												}}
+												color='red'
+												overlap='circular'
+											>
+												<DescriptionIcon
+													sx={{
+														fontSize: {
+															md: '5rem',
+															xs: '4rem',
+														},
+														color: '#9d9d9d',
+													}}
+												/>
+											</Badge>
+										) : (
+											<DescriptionIcon
+												sx={{
+													fontSize: {
+														md: '5rem',
+														xs: '4rem',
+													},
+													color: '#9d9d9d',
+												}}
+											/>
+										)}
+										<Typography
+											variant='p'
+											sx={{ fontSize: '1.2rem' }}
+										>
+											{file.nameWithExt}
+										</Typography>
+									</Grid>
+									<Menu
+										id={`context-menu-${file.nameWithExt}`}
+										anchorEl={contextMenuAnchorEl}
+										open={contextMenuOpen}
+										handleClose={handleContextMenuClose}
+										MenuListProps={{
+											'aria-labelledby': 'context-menu',
+										}}
 									>
-										{file.nameWithExt}
-									</Typography>
-								</Grid>
+										<MenuItem
+											onClick={handleContextMenuClose}
+										>
+											Delete
+										</MenuItem>
+										<MenuItem
+											onClick={handleContextMenuClose}
+										>
+											Rename
+										</MenuItem>
+									</Menu>
+								</Fragment>
 							))}
 						</>
 					)}
@@ -292,7 +416,7 @@ const FilesystemArea = () => {
 									onClick={
 										creationType === 'folder'
 											? createFolder
-											: null
+											: createFile
 									}
 								>
 									Create{' '}
