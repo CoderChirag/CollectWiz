@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
-import { app } from './utils/firebase/firebase.util';
+import { createNewUserFs } from './utils/firebase/fs/fs.util';
 
 import HomeRoute from './routes/home/home.route';
 import AuthRoute from './routes/auth/auth.route';

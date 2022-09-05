@@ -1,13 +1,16 @@
 import { useLocation } from 'react-router-dom';
 
-function FileSystemRoute() {
-	const location = useLocation();
+import RouteProtection from '../../components/molecules/route-protection/routeProtection.component';
+import HomePage from '../../components/organisms/home-page/home.component';
 
+
+const FileSystemRoute = () => {
+	const location = useLocation();
 	return (
-		<div className='App'>
-			<p>{location.pathname}</p>
-		</div>
+		<RouteProtection>
+			<HomePage />
+		</RouteProtection>
 	);
-}
+};
 
 export default FileSystemRoute;

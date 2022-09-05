@@ -6,9 +6,12 @@ import AuthPage from '../../components/organisms/auth-page/authPage.component';
 
 const AuthRoute = () => {
 	const { currentUser } = useContext(UserContext);
-	console.log(currentUser);
 
-	return currentUser ? <Navigate to='/root' /> : <AuthPage />;
+	return currentUser || window.localStorage.getItem('currentUser') ? (
+		<Navigate to='/root' />
+	) : (
+		<AuthPage />
+	);
 };
 
 export default AuthRoute;

@@ -20,4 +20,4 @@ export const onAuthStateChangedListener = callback => {
 	return onAuthStateChanged(auth, callback);
 };
 
-signOutUser();
+// signOutUser();

@@ -2,7 +2,11 @@ import { createContext, useEffect, useMemo, useReducer } from 'react';
 
 import { USER_ACTION_TYPES } from './user.types';
 import { onAuthStateChangedListener } from '../../utils/firebase/auth/auth.util';
-import { createUserProfileDocument } from '../../utils/firebase/users/users.util';
+// import { createNewUserProfileDocument } from '../../utils/firebase/users/users.util';
+// import {
+// 	createNewUserFs,
+// } from '../../utils/firebase/fs/fs.util';
+import { createNewUser } from '../../utils/firebase/transactions/transactions.util';
 
 export const UserContext = createContext({
 	currentUser: null,
@@ -23,9 +27,7 @@ const userReducer = (state, action) => {
 };
 
 const INITIAL_STATE = {
-	currentUser: localStorage.getItem('currentUser')
-		? JSON.parse(localStorage.getItem('currentUser'))
-		: null,
+	currentUser: null,
 };
 
 export const UserProvider = ({ children }) => {
@@ -33,6 +35,11 @@ export const UserProvider = ({ children }) => {
 
 	const setCurrentUser = useMemo(
 		() => user => {
+			if (user) {
+				window.localStorage.setItem('currentUser', user.uid);
+			} else {
+				window.localStorage.removeItem('currentUser');
+			}
 			dispatch({
 				type: USER_ACTION_TYPES.SET_CURRENT_USER,
 				payload: user,
@@ -45,7 +52,9 @@ export const UserProvider = ({ children }) => {
 		const unsubscribe = onAuthStateChangedListener(async user => {
 			console.log(user);
 			if (user) {
-				await createUserProfileDocument(user);
+				// await createNewUserProfileDocument(user);
+				// await createNewUserFs(user.uid);
+				await createNewUser(user);
 			}
 			setCurrentUser(user);
 		});
