@@ -1,7 +1,7 @@
-import LandingPage from "../../components/organisms/auth-page/landingPage.component";
-function HomeRoute() {
+import LandingPage from "../../components/organisms/landing-page/landingPage.component";
+const HomeRoute = () => {
 	return (
-		<div className='App'>
+		<div className=''>
 			<LandingPage></LandingPage>
 		</div>
 	);
