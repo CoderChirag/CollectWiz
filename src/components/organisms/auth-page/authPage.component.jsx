@@ -8,6 +8,10 @@ import GoogleButtonLight from '../../atoms/google-button-light/googleButtonLight
 
 const StyledHr = styled.hr`
 	width: 40%;
+	height: 1px;
+	border: none;
+	background-color: #aaa;
+	margin: auto;
 	@media (max-width: 768px) {
 		width: 80%;
 	}
@@ -22,7 +26,7 @@ const AuthPage = () => {
 					height: '20vh',
 				}}
 			>
-				<Box>
+				<Box >
 					<Grid container justifyContent='center' alignItems='center'>
 						<Grid item>
 							<AppTitle width='15rem' widthMd='10rem' />
