@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 import { Box, Typography, Button } from '@mui/material';
-import { Link } from 'react-router-dom';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
 
@@ -93,20 +92,20 @@ const LandingPage = () => {
 							Feel the power of storing the storable
 						</Typography>
 						<Box sx={{ width: '100%', marginTop: '20px' }}>
-							<Link to='/auth'>
-								<Button
-									variant='contained'
-									sx={{
-										fontSize: {
-											xxs: '0.8rem',
-											xs: '0.9rem',
-											md: '1rem',
-										},
-									}}
-								>
-									Join Now
-								</Button>
-							</Link>
+							<Button
+								variant='contained'
+								sx={{
+									fontSize: {
+										xxs: '0.8rem',
+										xs: '0.9rem',
+										md: '1rem',
+									},
+									textDecoration: 'none',
+								}}
+								href='/auth'
+							>
+								Join Now
+							</Button>
 						</Box>
 					</Box>
 				</Box>
