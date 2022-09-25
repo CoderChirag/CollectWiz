@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import styled from '@emotion/styled';
 import { Box, Grid, Avatar, MenuItem } from '@mui/material';
+
+import { UserContext } from '../../../contexts/user/user.context';
 
 import AppTitle from '../../atoms/app-title/appTitle.component';
 import Menu from '../../molecules/menu/menu.component';
@@ -15,6 +17,7 @@ const StyledHr = styled.hr`
 `;
 
 const Navbar = () => {
+	const { currentUser } = useContext(UserContext);
 	const [userProfileMenuAnchorEl, setUserProfileMenuAnchorEl] =
 		useState(null);
 	const userProfileMenuOpen = Boolean(userProfileMenuAnchorEl);
@@ -46,7 +49,7 @@ const Navbar = () => {
 						}
 						aria-haspopup='true'
 						aria-expanded={userProfileMenuOpen ? 'true' : undefined}
-						src='/broken-image.jpg'
+						src={currentUser && currentUser.photoURL}
 						onClick={handleUserProfileMenuClick}
 						sx={{ cursor: 'pointer' }}
 					/>

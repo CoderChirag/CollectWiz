@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const AppHeading = styled.img`
 	width: ${props => props.width};
 	cursor: ${props => props.sx.cursor};
-	@media (max-width: 768px) {
+	@media (max-width: 900px) {
 		width: ${props => props.widthMd};
 	}
 `;

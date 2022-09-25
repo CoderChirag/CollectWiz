@@ -26,10 +26,10 @@ const AuthPage = () => {
 					height: '20vh',
 				}}
 			>
-				<Box >
+				<Box>
 					<Grid container justifyContent='center' alignItems='center'>
 						<Grid item>
-							<AppTitle width='15rem' widthMd='10rem' />
+							<AppTitle width='15rem' widthMd='10rem' href='/' />
 						</Grid>
 					</Grid>
 					<StyledHr />
